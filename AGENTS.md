@@ -34,10 +34,17 @@ These rules come from the brief. Do not break them.
 - The data is synthetic. Do not call it real data in the UI or in the pitch text.
 
 ## Stack
-TBD
+- Node 22.13 or newer (it runs the `.ts` files directly and has `node:sqlite` built in). Run `npm install` once.
+- `core/`: TypeScript engine. Simulator, baselines, planner, explanation template, and number check. It has no dependencies and runs in the browser and in Node.
+- `app/`: React 18 + Vite 5 dashboard. It reads `data/out/*.csv` at build time and runs `core/` in the browser.
+- `server/`: local Node server on `127.0.0.1:8787` that stores approve / edit / reject decisions in SQLite (`server/audit.db`, not committed).
+- Commands: `npm run dev` starts the server and the app at http://localhost:5173. `npm test` runs the core tests. `npm run typecheck` and `npm run build` check the types and the bundle.
+- Settings for the planner and simulator are in `core/config.ts`. Each number there has a line in `data/ASSUMPTIONS.md` (P1–P8).
 
 ## Build order
-TBD
+1. Done: simulator, baselines (FCFS and a historical-average stand-in), planner search, dashboard (demand, planner comparison, ramp schedule), and approvals with an audit log.
+2. Next: booking ledger and 2022 reference curve in `generate.py`, then the pickup-model forecaster.
+3. Then: the LLM intake parser and the LLM explainer behind the local server. The explainer must pass the number check in `core/explain.ts`. Until then the explanation is a template.
 
 ## Work rules
 

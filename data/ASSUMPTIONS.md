@@ -28,6 +28,20 @@ All data is **synthetic**. Every number below is either from a public source (ma
 |---|---|---|---|
 | A13 | Fog ground stop | Sat 2/13, 6–11 AM. Arrivals in that window slip to 11 AM–3 PM. | ours. LA marine-layer fog is plausible in February. FAA ground stops and delay programs are expected during the event [S3]. |
 
+## Planner and simulator settings (`core/config.ts`)
+These are not in the generated data. They set how the simulator and planner score a policy.
+
+| ID | Assumption | Value | Basis |
+|---|---|---|---|
+| P1 | Nights in the planning week | 7 (Wed night through Tue night) | Same window as A1 |
+| P2 | A jet "stays the night" if parked at | 02:00 the next morning | ours |
+| P3 | Longest wait for a free spot before a jet is refused | 30 min | ours |
+| P4 | Time to clear and re-use a spot | 10 min | ours |
+| P5 | Overflow airports | A: 40, B: 30, C: 30 jets at once; redirect cost 1, 1.5, 2 | **ours, fictional.** The 2022 region had about 750 spots across 5 airports [S2]; these are the share we assume partner FBOs take from us. |
+| P6 | Score weights (lower is better) | turned away 10, redirect = airport cost, wait 0.5 per hour, idle spot-hour while refusing 0.2 | ours. Turning a jet away costs the most. |
+| P7 | Historical-average rule | Keep the normal-week drop-and-go share (25%, A10) of each class free every night | ours. A stand-in until the 2022 reference booking curve exists. |
+| P8 | Drop-and-go-only trigger levels searched | 70%, 80%, 90% of a class in use, or off | ours |
+
 ## What the numbers mean
 - `demand_*` in `hourly.csv` = jets that **want** a spot of that size in that hour, **if nobody is turned away**. It is deliberately uncapped.
 - `over_*` = demand minus spots. This overflow is the problem the tool plans for, by deciding when to switch to drop-and-go only, which spots to hold, and where to send overflow jets.
