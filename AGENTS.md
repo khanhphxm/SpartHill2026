@@ -6,8 +6,6 @@ This repository is for SpartHill Hacks 2026, NCBAA aviation track "The Intellige
 
 The product is a planning tool for a fictional FBO at Hawthorne Airport (HHR), near SoFi Stadium. It forecasts private-jet parking demand for Super Bowl LXI week (Wed 2027-02-10 to Tue 2027-02-16). It recommends a parking policy for low, medium, and high demand. A human manager approves, edits, or rejects each recommendation.
 
-The demo runs locally on a laptop. There is no deployment.
-
 ## Documents
 
 Read these before you change code:
@@ -36,23 +34,10 @@ These rules come from the brief. Do not break them.
 - The data is synthetic. Do not call it real data in the UI or in the pitch text.
 
 ## Stack
-
-- Frontend: React + Vite. The forecaster, planner, simulator, and baselines are TypeScript in `core/`. They run in the browser.
-- Local API server: Bun + Hono (default, not final). It calls the LLM and stores approvals in SQLite.
-- Keep the LLM API key in `.env` on the server only. Do not put a key in browser code, commits, or logs.
-- Save LLM outputs for the demo scenarios. If an LLM call fails, use the saved output. The demo must work without Wi-Fi.
+TBD
 
 ## Build order
-
-Do the work in this order. Each step must work before the next step starts:
-
-1. Data update (booking ledger, 2022 reference booking curve, sample request text).
-2. Simulator and baselines (first come first served, historical-average rule).
-3. Forecaster (pickup model).
-4. Planner (policy search scored by the simulator).
-5. Dashboard.
-6. LLM intake parser and explainer.
-7. Approval cards and audit log.
+TBD
 
 ## Work rules
 
