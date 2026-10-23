@@ -1,0 +1,50 @@
+flowchart LR
+  subgraph DATA["Synthetic data (offline, Python)"]
+    GEN["generate.py"]
+    LEDGER[("Booking ledger<br/>2027 week: low / med / high / fog")]
+    REF[("2022 reference event<br/>booking curve")]
+    NORM[("Normal-week baseline")]
+    TEXT[("Sample free-text<br/>requests")]
+    GEN --> LEDGER & REF & NORM & TEXT
+  end
+
+  subgraph SERVER["Local API server (localhost)"]
+    INTAKE["Intake parser<br/>LLM: text to booking<br/>redacts tails/names"]
+    VALID{"Schema + sanity<br/>check"}
+    EXPLAIN["Explainer<br/>LLM: plain-English reasons"]
+    NUMCHK{"Number check:<br/>every number in text<br/>exists in input"}
+    AUDIT[("SQLite: approvals<br/>+ audit log")]
+  end
+
+  subgraph CORE["core/ TypeScript (runs in browser)"]
+    FC["Forecaster<br/>pickup model<br/>low / med / high bands"]
+    PLAN["Planner<br/>search policy settings"]
+    SIM["Simulator<br/>hour-by-hour replay"]
+    BASE["Baselines<br/>FCFS + historical average"]
+  end
+
+  subgraph UI["Dashboard (React + Vite)"]
+    VIEW["Normal vs event week<br/>forecast bands"]
+    CMP["3-planner comparison<br/>turned away / idle spots / wait"]
+    FOG["Fog replay"]
+    CARDS["Recommendation cards"]
+  end
+
+  MGR(["FBO manager<br/>FINAL AUTHORITY"])
+
+  TEXT --> INTAKE --> VALID
+  VALID -- ok --> LEDGER
+  VALID -- reject --> MGR
+  LEDGER --> FC
+  REF --> FC
+  NORM --> VIEW
+  FC --> VIEW
+  FC --> PLAN
+  PLAN <--> SIM
+  BASE --> SIM
+  SIM --> CMP
+  SIM --> FOG
+  PLAN --> EXPLAIN --> NUMCHK --> CARDS
+  CARDS --> MGR
+  MGR -- "approve / edit / reject" --> AUDIT
+  AUDIT -.-> CARDS
